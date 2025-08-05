@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Day Theme (Goldtag) Colors */
+  --day-text: #FFC107;
+  --day-background: #C8E6C8;
+  --day-primary: #81D4FA;
+  --day-secondary: #FFD54F;
+  --day-accent: #FFD700;
+  
+  /* Night Theme (Silbernacht) Colors */
+  --night-text: #e0e7ff;
+  --night-background: #312e81;
+  --night-primary: #6366f1;
+  --night-secondary: #4f46e5;
+  --night-accent: #818cf8;
+  
+  /* Keys Colors */
+  --silver-key: #B0BEC5;
+  --gold-key: #FFD700;
+  
+  /* Lumi Accent */
+  --lumi-accent: #FFC107;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+/* Day theme gradient background */
+.day-gradient-bg {
+  background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-amber-300 dark:bg-indigo-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-amber-200 dark:bg-indigo-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-amber-100 dark:bg-indigo-500;
+}
+
+/* Animation utilities */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  @apply ring-2 ring-amber-400 ring-offset-2 ring-offset-amber-100 dark:ring-indigo-400 dark:ring-offset-indigo-900 outline-none;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .text-gray-600 {
+    @apply text-gray-800 dark:text-gray-200;
+  }
+  
+  .text-gray-500 {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  * {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* Mobile improvements */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Touch device improvements */
+@media (hover: none) and (pointer: coarse) {
+  button:hover {
+    transform: none;
+  }
+  
+  .group:hover .group-hover\:scale-110 {
+    transform: none;
+  }
+}
