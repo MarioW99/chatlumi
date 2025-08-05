@@ -221,34 +221,38 @@ export default function ProfilePage() {
           {activeTab === 'overview' && (
             <div className="space-y-6">
               {/* Stats Grid */}
-              <div className="grid md:grid-cols-3 gap-6">
-                <div className="bg-white/80 dark:bg-indigo-800 p-6 rounded-xl shadow-lg border border-amber-200/50 dark:border-indigo-600">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-amber-900 dark:text-indigo-100 mb-2">
-                      {userProfile?.points || 0}
+              {loading || !userProfile ? (
+                <LoadingSkeleton type="stats" />
+              ) : (
+                <div className="grid md:grid-cols-3 gap-6">
+                  <div className="bg-white/80 dark:bg-indigo-800 p-6 rounded-xl shadow-lg border border-amber-200/50 dark:border-indigo-600">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-amber-900 dark:text-indigo-100 mb-2">
+                        {userProfile?.points || 0}
+                      </div>
+                      <div className="text-amber-700 dark:text-indigo-200">Total Points</div>
                     </div>
-                    <div className="text-amber-700 dark:text-indigo-200">Total Points</div>
+                  </div>
+                  
+                  <div className="bg-white/80 dark:bg-indigo-800 p-6 rounded-xl shadow-lg border border-amber-200/50 dark:border-indigo-600">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-amber-900 dark:text-indigo-100 mb-2">
+                        {userProfile?.silver_keys || 0}
+                      </div>
+                      <div className="text-amber-700 dark:text-indigo-200">Silver Keys</div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/80 dark:bg-indigo-800 p-6 rounded-xl shadow-lg border border-amber-200/50 dark:border-indigo-600">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-amber-900 dark:text-indigo-100 mb-2">
+                        {userProfile?.gold_keys || 0}
+                      </div>
+                      <div className="text-amber-700 dark:text-indigo-200">Gold Keys</div>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="bg-white/80 dark:bg-indigo-800 p-6 rounded-xl shadow-lg border border-amber-200/50 dark:border-indigo-600">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-amber-900 dark:text-indigo-100 mb-2">
-                      {userProfile?.silver_keys || 0}
-                    </div>
-                    <div className="text-amber-700 dark:text-indigo-200">Silver Keys</div>
-                  </div>
-                </div>
-                
-                <div className="bg-white/80 dark:bg-indigo-800 p-6 rounded-xl shadow-lg border border-amber-200/50 dark:border-indigo-600">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-amber-900 dark:text-indigo-100 mb-2">
-                      {userProfile?.gold_keys || 0}
-                    </div>
-                    <div className="text-amber-700 dark:text-indigo-200">Gold Keys</div>
-                  </div>
-                </div>
-              </div>
+              )}
 
               {/* Growth Path */}
               <div className="bg-white/80 dark:bg-indigo-800 p-6 rounded-xl shadow-lg border border-amber-200/50 dark:border-indigo-600">

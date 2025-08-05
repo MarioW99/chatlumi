@@ -4,6 +4,7 @@ import { TreePine, Menu, X, Sun, Moon, Sparkles, LogOut, User } from 'lucide-rea
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../hooks/useAuth';
 import AuthModal from './AuthModal';
+import OfflineIndicator from './OfflineIndicator';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -82,6 +83,9 @@ const Navbar = () => {
 
               {/* Auth Buttons */}
               <div className="flex items-center space-x-4">
+                {/* Offline Indicator */}
+                <OfflineIndicator />
+                
                 {loading ? (
                   <div className="w-20 h-8 bg-amber-100 dark:bg-indigo-700 rounded animate-pulse"></div>
                 ) : user ? (

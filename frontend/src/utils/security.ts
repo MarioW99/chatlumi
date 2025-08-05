@@ -54,14 +54,47 @@ export const validateMessage = (message: string): { isValid: boolean; error?: st
 };
 
 export const rateLimit = {
-  private requests: new Map<string, { count: number; resetTime: number }>(),
+  requests: new Map<string, { count: number; resetTime: number }>(),
+  storageKey: 'chat_me_rate_limits',
+  
+  // Load rate limits from localStorage
+  loadFromStorage(): void {
+    try {
+      const stored = localStorage.getItem(this.storageKey);
+      if (stored) {
+        const data = JSON.parse(stored);
+        this.requests = new Map(Object.entries(data).map(([key, value]: [string, any]) => [
+          key,
+          { count: value.count, resetTime: value.resetTime }
+        ]));
+      }
+    } catch (error) {
+      console.warn('Failed to load rate limits from storage:', error);
+    }
+  },
+  
+  // Save rate limits to localStorage
+  saveToStorage(): void {
+    try {
+      const data = Object.fromEntries(this.requests);
+      localStorage.setItem(this.storageKey, JSON.stringify(data));
+    } catch (error) {
+      console.warn('Failed to save rate limits to storage:', error);
+    }
+  },
   
   checkLimit(key: string, maxRequests: number = 10, windowMs: number = 60000): boolean {
+    // Load from storage on first use
+    if (this.requests.size === 0) {
+      this.loadFromStorage();
+    }
+    
     const now = Date.now();
     const record = this.requests.get(key);
     
     if (!record || now > record.resetTime) {
       this.requests.set(key, { count: 1, resetTime: now + windowMs });
+      this.saveToStorage();
       return true;
     }
     
@@ -70,10 +103,12 @@ export const rateLimit = {
     }
     
     record.count++;
+    this.saveToStorage();
     return true;
   },
   
   clear(): void {
     this.requests.clear();
+    localStorage.removeItem(this.storageKey);
   }
 }; 

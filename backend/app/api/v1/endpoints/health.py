@@ -44,16 +44,27 @@ async def health_check():
         try:
             nlp_service = NLPAgentService()
             nlp_status = "healthy" if nlp_service.embedding_model else "degraded"
+            
+            # Try to get memory info, fallback if psutil not available
+            try:
+                import psutil
+                memory_info = psutil.virtual_memory()
+                memory_usage = f"{memory_info.percent}% ({memory_info.used // (1024**3)}GB/{memory_info.total // (1024**3)}GB)"
+            except ImportError:
+                memory_usage = "unavailable (psutil not installed)"
+            
             nlp_health = {
                 "status": nlp_status,
                 "models_loaded": nlp_service.embedding_model is not None,
-                "gpu_available": str(nlp_service.device) != "cpu"
+                "gpu_available": str(nlp_service.device) != "cpu",
+                "memory_usage": memory_usage
             }
         except Exception as e:
             nlp_health = {
                 "status": "unhealthy",
                 "models_loaded": False,
                 "gpu_available": False,
+                "memory_usage": "unknown",
                 "error": str(e)
             }
         
@@ -127,9 +138,13 @@ async def nlp_health():
         test_message = "Hello, how are you?"
         response = await nlp_service.process_message(test_message, "main")
         
-        import psutil
-        memory_info = psutil.virtual_memory()
-        memory_usage = f"{memory_info.percent}% ({memory_info.used // (1024**3)}GB/{memory_info.total // (1024**3)}GB)"
+        # Try to get memory info, fallback if psutil not available
+        try:
+            import psutil
+            memory_info = psutil.virtual_memory()
+            memory_usage = f"{memory_info.percent}% ({memory_info.used // (1024**3)}GB/{memory_info.total // (1024**3)}GB)"
+        except ImportError:
+            memory_usage = "unavailable (psutil not installed)"
         
         return NLPHealthResponse(
             status="healthy" if response.response else "degraded",

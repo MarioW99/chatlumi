@@ -204,7 +204,7 @@ export class AgentService {
       // Only save messages if user is authenticated
       if (!userId) return;
 
-      const { error } = await supabase.getClient()
+      const { error } = await supabase
         .from('chat_messages')
         .insert({
           user_id: userId,
@@ -233,7 +233,7 @@ export class AgentService {
       // Only fetch messages if user is authenticated
       if (!userId) return [];
 
-      const { data, error } = await supabase.getClient()
+      const { data, error } = await supabase
         .from('chat_messages')
         .select('sender, content, timestamp')
         .eq('user_id', userId)
@@ -327,7 +327,7 @@ export class AgentService {
         context.previousMessages = recentMessages;
 
         // Get user profile for additional context
-        const { data: userProfile } = await supabase.getClient()
+        const { data: userProfile } = await supabase
           .from('users')
           .select('level, points, path')
           .eq('id', userId)
@@ -397,7 +397,7 @@ export class AgentService {
     timestamp: string;
   }>> {
     try {
-      const { data, error } = await supabase.getClient()
+      const { data, error } = await supabase
         .from('chat_messages')
         .select('id, sender, content, timestamp')
         .eq('user_id', userId)

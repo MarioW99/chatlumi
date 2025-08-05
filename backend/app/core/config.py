@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     
     # Security
     SECRET_KEY: SecretStr
+    ALGORITHM: str = "HS256"
     
     # OpenAI Configuration
     OPENAI_API_KEY: SecretStr

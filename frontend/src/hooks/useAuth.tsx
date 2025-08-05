@@ -161,13 +161,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         setError(`Profile loading failed: ${errorMessage}`);
         
-        // Create fallback profile using the familiarization status from Step 1 if available
-        const fallbackFamiliarizationStatus = familiarizationStatus !== null ? familiarizationStatus : false;
-        
-        // Also preserve familiarization_completed status if it was previously true for this user
+        // Preserve familiarization_completed status if it was previously true for this user
         const preserveFamiliarizationStatus = userProfileRef.current?.id === user.id && userProfileRef.current?.familiarization_completed === true;
         
-        const finalFamiliarizationStatus = preserveFamiliarizationStatus || fallbackFamiliarizationStatus;
+        // Default to false for new users, preserve true for existing users
+        const finalFamiliarizationStatus = preserveFamiliarizationStatus;
         
         const fallbackProfile = {
           id: user.id,
@@ -183,9 +181,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (isMounted.current) {
           console.log('🔄 Using fallback profile due to error');
-          console.log('🎯 Step 1 familiarization status:', familiarizationStatus);
           console.log('🔒 Preserved familiarization status:', preserveFamiliarizationStatus);
-          console.log('✅ Final familiarization status:', finalFamiliarizationStatus);
           setUserProfile(fallbackProfile);
           setNeedsFamiliarization(!finalFamiliarizationStatus);
         }

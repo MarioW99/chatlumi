@@ -289,8 +289,8 @@ class NLPAgentService:
             agent = self.agent_personalities.get(agent_type, self.agent_personalities["main"])
             
             # Analyze message components
-            emotion = await self._analyze_emotion(message)
-            intent = await self._analyze_intent(message)
+            emotion = self._analyze_emotion(message)
+            intent = self._analyze_intent(message)
             context_info = self._extract_context(context) if context else {}
             
             # Decide whether to use OpenAI or local models
@@ -335,7 +335,7 @@ class NLPAgentService:
                 error=str(e)
             )
     
-    async def _analyze_emotion(self, message: str) -> str:
+    def _analyze_emotion(self, message: str) -> str:
         """Analyze the emotional tone of the message using the emotion classifier."""
         try:
             if self.emotion_classifier:
@@ -381,7 +381,7 @@ class NLPAgentService:
         else:
             return "neutral"
     
-    async def _analyze_intent(self, message: str) -> str:
+    def _analyze_intent(self, message: str) -> str:
         """Analyze the intent of the message using keyword matching and embeddings."""
         try:
             message_lower = message.lower()
