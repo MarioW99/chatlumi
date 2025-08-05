@@ -314,49 +314,74 @@ export class AgentService {
       // Create the request promise and store it for deduplication
       const requestPromise = (async () => {
         try {
-                  // Save user message first (only if authenticated)
-        await this.saveMessage(userId, 'user', sanitizedMessage, path);
+          // Save user message first (only if authenticated)
+          await this.saveMessage(userId, 'user', sanitizedMessage, path);
 
-      // Get recent conversation context if requested and user is authenticated
-      let context: AgentRequest['context'] = { path };
-      
-      if (includeContext && userId) {
-        const recentMessages = await this.getRecentMessages(userId, path, 5);
-        context.previousMessages = recentMessages;
+          // Get recent conversation context if requested and user is authenticated
+          let context: AgentRequest['context'] = { path };
+          
+          if (includeContext && userId) {
+            const recentMessages = await this.getRecentMessages(userId, path, 5);
+            context.previousMessages = recentMessages;
 
-        // Get user profile for additional context
-        const { data: userProfile } = await supabase
-          .from('users')
-          .select('level, points, path')
-          .eq('id', userId)
-          .single();
+            // Get user profile for additional context
+            const { data: userProfile } = await supabase
+              .from('users')
+              .select('level, points, path')
+              .eq('id', userId)
+              .single();
 
-        if (userProfile) {
-          context.userProfile = userProfile;
+            if (userProfile) {
+              context.userProfile = userProfile;
+            }
+          }
+
+          // Call the appropriate agent
+          const agentRequest: AgentRequest = {
+            message: sanitizedMessage,
+            userId: userId || undefined,
+            context
+          };
+
+          const agentResponse = await this.callAgentWithRetry(agentType, agentRequest);
+
+          // Save agent response (only if authenticated and no error)
+          if (!agentResponse.error && agentResponse.response) {
+            await this.saveMessage(userId, 'lumi', agentResponse.response, path);
+          }
+
+          // Cache the response
+          if (useCache && !agentResponse.error) {
+            const cacheKey = requestKey;
+            this.messageCache.set(cacheKey, agentResponse);
+          }
+
+          return agentResponse;
+        } catch (error) {
+          console.error('Error in sendMessage:', error);
+          
+          // If it's a validation error, return it directly
+          if (error instanceof Error && (error.message.includes('cannot be empty') || error.message.includes('too long') || error.message.includes('unsafe content'))) {
+            return {
+              response: "I couldn't process that message. Please check your input and try again.",
+              error: error.message
+            };
+          }
+
+          return {
+            response: "I'm experiencing some technical difficulties. Please try again.",
+            error: error instanceof Error ? error.message : 'Unknown error'
+          };
+        } finally {
+          // Clean up the pending request
+          this.pendingRequests.delete(requestKey);
         }
-      }
+      })();
 
-      // Call the appropriate agent
-              const agentRequest: AgentRequest = {
-          message: sanitizedMessage,
-          userId: userId || undefined,
-          context
-        };
+      // Store the request promise for deduplication
+      this.pendingRequests.set(requestKey, requestPromise);
 
-      const agentResponse = await this.callAgentWithRetry(agentType, agentRequest);
-
-      // Save agent response (only if authenticated and no error)
-      if (!agentResponse.error && agentResponse.response) {
-        await this.saveMessage(userId, 'lumi', agentResponse.response, path);
-      }
-
-      // Cache the response
-      if (useCache && !agentResponse.error) {
-        const cacheKey = requestKey;
-        this.messageCache.set(cacheKey, agentResponse);
-      }
-
-      return agentResponse;
+      return await requestPromise;
     } catch (error) {
       console.error('Error in sendMessage:', error);
       
@@ -372,17 +397,8 @@ export class AgentService {
         response: "I'm experiencing some technical difficulties. Please try again.",
         error: error instanceof Error ? error.message : 'Unknown error'
       };
-    } finally {
-      // Clean up the pending request
-      this.pendingRequests.delete(requestKey);
     }
-  })();
-
-  // Store the request promise for deduplication
-  this.pendingRequests.set(requestKey, requestPromise);
-
-  return await requestPromise;
-}
+  }
 
   public static async getChatHistory(
     userId: string,
