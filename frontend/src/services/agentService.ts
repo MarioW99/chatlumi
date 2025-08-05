@@ -189,8 +189,6 @@ export class AgentService {
     return {
       response: "I'm having trouble connecting right now. Please try again in a moment.",
       error: lastError instanceof Error ? lastError.message : 'Unknown error'
-    };",
-      error: lastError instanceof Error ? lastError.message : 'Unknown error'
     };
   }
 
