@@ -22,7 +22,7 @@ This project follows a modern microservices architecture with clear separation o
 - **Multi-Agent System**: Specialized AI agents for Fitness, Nutrition, and Mental Strength
 - **Quest System**: Complete personal quests and explore templates
 - **Progress Tracking**: Monitor growth with points, keys, and levels
-- **Dual Themes**: Goldtag (light) and Silbernacht (dark) modes
+- **Dual Themes**: Goldday (light) and Silvernight (dark) modes
 - **Familiarization Process**: Personalized onboarding experience
 
 ### Technical Features
@@ -237,8 +237,8 @@ Each agent has:
 ## 🎨 Design System
 
 ### Themes
-- **Goldtag (Light)**: Warm, energetic daytime theme
-- **Silbernacht (Dark)**: Cool, calming nighttime theme
+- **Goldday (Light)**: Warm, energetic daytime theme
+- **Silvernight (Dark)**: Cool, calming nighttime theme
 - **Auto Mode**: Automatic switching based on time of day
 
 ### Color Palette
