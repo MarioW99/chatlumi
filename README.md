@@ -288,9 +288,6 @@ Each agent has:
 - Use conventional commit messages
 - Ensure code passes linting and formatting checks
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
